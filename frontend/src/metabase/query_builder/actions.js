@@ -42,6 +42,12 @@ export const popState = createThunkAction(POP_STATE, (location) =>
     }
 );
 
+export const CREATE_PUBLIC_LINK = "metabase/card/CREATE_PUBLIC_LINK";
+export const createPublicLink = createAction(CREATE_PUBLIC_LINK, CardApi.createPublicLink);
+
+export const DELETE_PUBLIC_LINK = "metabase/card/DELETE_PUBLIC_LINK";
+export const deletePublicLink = createAction(DELETE_PUBLIC_LINK, CardApi.deletePublicLink);
+
 export const UPDATE_URL = "metabase/qb/UPDATE_URL";
 export const updateUrl = createThunkAction(UPDATE_URL, (card, isDirty = false, replaceState = false) =>
     (dispatch, getState) => {

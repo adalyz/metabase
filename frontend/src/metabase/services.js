@@ -24,6 +24,9 @@ export const CardApi = {
     favorite:                   POST("/api/card/:cardId/favorite"),
     unfavorite:               DELETE("/api/card/:cardId/favorite"),
     updateLabels:               POST("/api/card/:cardId/labels"),
+
+    createPublicLink:           POST("/api/card/:id/public_link"),
+    deletePublicLink:         DELETE("/api/card/:id/public_link"),
 };
 
 export const DashboardApi = {
@@ -35,6 +38,9 @@ export const DashboardApi = {
     addcard:                    POST("/api/dashboard/:dashId/cards"),
     removecard:               DELETE("/api/dashboard/:dashId/cards"),
     reposition_cards:            PUT("/api/dashboard/:dashId/cards"),
+
+    createPublicLink:           POST("/api/dashboard/:id/public_link"),
+    deletePublicLink:         DELETE("/api/dashboard/:id/public_link"),
 };
 
 export const CollectionsApi = {

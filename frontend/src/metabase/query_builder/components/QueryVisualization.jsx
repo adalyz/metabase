@@ -11,6 +11,7 @@ import VisualizationResult from "./VisualizationResult.jsx";
 
 import Warnings from "./Warnings.jsx";
 import DownloadWidget from "./DownloadWidget.jsx";
+import QuestionShareWidget from "../containers/QuestionShareWidget";
 
 import { formatNumber, inflect } from "metabase/lib/formatting";
 import Utils from "metabase/lib/utils";
@@ -82,6 +83,8 @@ export default class QueryVisualization extends Component {
 
     renderHeader() {
         const { isObjectDetail, isRunning, card, result } = this.props;
+        const isDirty = this.queryIsDirty();
+        const isSaved = card.id != null;
         return (
             <div className="relative flex flex-no-shrink mt3 mb1" style={{ minHeight: "2em" }}>
                 <span className="relative z4">
@@ -90,23 +93,29 @@ export default class QueryVisualization extends Component {
                 <div className="absolute flex layout-centered left right z3">
                     <RunButton
                         canRun={this.props.isRunnable}
-                        isDirty={this.queryIsDirty()}
+                        isDirty={isDirty}
                         isRunning={isRunning}
                         runFn={this.runQuery}
                         cancelFn={this.props.cancelQueryFn}
                     />
                 </div>
                 <div className="absolute right z4 flex align-center" style={{ lineHeight: 0 /* needed to align icons :-/ */ }}>
-                    { !this.queryIsDirty() && this.renderCount() }
+                    { !isDirty && this.renderCount() }
                     { !isObjectDetail &&
                         <Warnings warnings={this.state.warnings} className="mx2" size={18} />
                     }
-                    { !this.queryIsDirty() && result && !result.error ?
+                    { !isDirty && result && !result.error ?
                         <DownloadWidget
                             className="mx1"
                             card={card}
                             datasetQuery={result.json_query}
                             isLarge={result.data.rows_truncated != null}
+                        />
+                    : null }
+                    { isSaved ?
+                        <QuestionShareWidget
+                            className="mx1"
+                            card={card}
                         />
                     : null }
                 </div>

@@ -35,7 +35,10 @@ import {
     QUERY_ERRORED,
     LOAD_OBJECT_DETAIL_FK_REFERENCES,
 
-    SET_CURRENT_STATE
+    SET_CURRENT_STATE,
+
+    CREATE_PUBLIC_LINK,
+    DELETE_PUBLIC_LINK
 } from "./actions";
 
 // various ui state options
@@ -91,7 +94,10 @@ export const card = handleActions({
     [SET_QUERY_SOURCE_TABLE]: { next: (state, { payload }) => payload },
     [SET_QUERY]: { next: (state, { payload }) => payload.card },
 
-    [QUERY_COMPLETED]: { next: (state, { payload }) => ({ ...state, display: payload.cardDisplay }) }
+    [QUERY_COMPLETED]: { next: (state, { payload }) => ({ ...state, display: payload.cardDisplay }) },
+
+    [CREATE_PUBLIC_LINK]: { next: (state, { payload }) => ({ ...state, public_uuid: payload.uuid })},
+    [DELETE_PUBLIC_LINK]: { next: (state, { payload }) => ({ ...state, public_uuid: null })}
 }, null);
 
 // a copy of the card being worked on at it's last known saved state.  if the card is NEW then this should be null.
