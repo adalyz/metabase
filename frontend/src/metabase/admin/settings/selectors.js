@@ -49,6 +49,11 @@ const SECTIONS = [
                 key: "enable-advanced-humanization",
                 display_name: "Friendly Table and Field Names",
                 type: "boolean"
+            },
+            {
+                key: "enable-public-sharing",
+                display_name: "Enable Public Sharing",
+                type: "boolean"
             }
         ]
     },
