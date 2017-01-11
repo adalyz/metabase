@@ -33,7 +33,8 @@
 
 (defn- pre-cascade-delete [dashboard]
   (db/cascade-delete! 'Revision :model "Dashboard" :model_id (u/get-id dashboard))
-  (db/cascade-delete! DashboardCard :dashboard_id (u/get-id dashboard)))
+  (db/cascade-delete! DashboardCard :dashboard_id (u/get-id dashboard))
+  (db/cascade-delete! 'PublicDashboard :dashboard_id (u/get-id dashboard)))
 
 (defn- pre-insert [dashboard]
   (let [defaults {:parameters   []}]

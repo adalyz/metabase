@@ -80,6 +80,8 @@
                        ['Card                       :creator_id]
                        ['Dashboard                  :creator_id]
                        ['Metric                     :creator_id]
+                       ['PublicCard                 :creator_id]
+                       ['PublicDashboard            :creator_id]
                        ['Pulse                      :creator_id]
                        ['QueryExecution             :executor_id]
                        ['Revision                   :user_id]

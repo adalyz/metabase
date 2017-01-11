@@ -140,7 +140,8 @@
   (db/cascade-delete! 'DashboardCardSeries :card_id id)
   (db/cascade-delete! 'DashboardCard :card_id id)
   (db/cascade-delete! 'CardFavorite :card_id id)
-  (db/cascade-delete! 'CardLabel :card_id id))
+  (db/cascade-delete! 'CardLabel :card_id id)
+  (db/cascade-delete! 'PublicCard :card_id id))
 
 
 (u/strict-extend (class Card)

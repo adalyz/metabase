@@ -41,6 +41,8 @@
                              [permissions-group :refer [PermissionsGroup]]
                              [permissions-group-membership :refer [PermissionsGroupMembership]]
                              [permissions-revision :refer [PermissionsRevision]]
+                             [public-card :refer [PublicCard]]
+                             [public-dashboard :refer [PublicDashboard]]
                              [pulse :refer [Pulse]]
                              [pulse-card :refer [PulseCard]]
                              [pulse-channel :refer [PulseChannel]]
@@ -101,6 +103,8 @@
    PermissionsRevision
    Collection
    CollectionRevision
+   PublicCard
+   PublicDashboard
    ;; migrate the list of finished DataMigrations as the very last thing (all models to copy over should be listed above this line)
    DataMigrations])
 

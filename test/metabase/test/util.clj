@@ -11,6 +11,8 @@
                              [field :refer [Field]]
                              [metric :refer [Metric]]
                              [permissions-group :refer [PermissionsGroup]]
+                             [public-card :refer [PublicCard]]
+                             [public-dashboard :refer [PublicDashboard]]
                              [pulse :refer [Pulse]]
                              [pulse-channel :refer [PulseChannel]]
                              [raw-column :refer [RawColumn]]
@@ -94,6 +96,7 @@
   ((resolve 'metabase.test.data.users/user->id) username))
 
 (defn- rasta-id     [] (user-id :rasta))
+(defn- crowberto-id [] (user-id :crowberto))
 
 
 (defprotocol ^:private WithTempDefaults
@@ -146,6 +149,14 @@
 (u/strict-extend (class PermissionsGroup)
   WithTempDefaults
   {:with-temp-defaults (fn [_] {:name (random-name)})})
+
+(u/strict-extend (class PublicCard)
+  WithTempDefaults
+  {:with-temp-defaults (fn [_] {:creator_id (crowberto-id)})})
+
+(u/strict-extend (class PublicDashboard)
+  WithTempDefaults
+  {:with-temp-defaults (fn [_] {:creator_id (crowberto-id)})})
 
 (u/strict-extend (class Pulse)
   WithTempDefaults

@@ -9,11 +9,13 @@
                              [dashboard :refer [Dashboard]]
                              [dashboard-card :refer [DashboardCard retrieve-dashboard-card]]
                              [dashboard-card-series :refer [DashboardCardSeries]]
+                             [public-dashboard :refer [PublicDashboard]]
                              [revision :refer [Revision]]
                              [user :refer [User]])
             [metabase.test.data :refer :all]
             [metabase.test.data.users :refer :all]
-            [metabase.test.util :as tu]))
+            [metabase.test.util :as tu]
+            [metabase.util :as u]))
 
 
 ;; ## Helper Fns
@@ -441,3 +443,73 @@
     [(dissoc ((user->client :crowberto) :post 200 (format "dashboard/%d/revert" dashboard-id) {:revision_id revision-id}) :id :timestamp)
      (doall (for [revision ((user->client :crowberto) :get 200 (format "dashboard/%d/revisions" dashboard-id))]
               (dissoc revision :timestamp :id)))]))
+
+
+;;; +----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+;;; |                                                                    PUBLIC SHARING ENDPOINTS                                                                    |
+;;; +----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+;;; ------------------------------------------------------------ POST /api/dashboard/:id/public_link ------------------------------------------------------------
+
+;; Test that we can share a Dashboard
+(expect
+  (tu/with-temporary-setting-values [enable-public-sharing true]
+    (tu/with-temp Dashboard [dashboard]
+      (let [{uuid :uuid} ((user->client :crowberto) :post 200 (format "dashboard/%d/public_link" (u/get-id dashboard)))]
+        (db/exists? PublicDashboard :uuid uuid)))))
+
+;; Test that we *cannot* share a Dashboard if we aren't admins
+(expect
+  "You don't have permissions to do that."
+  (tu/with-temporary-setting-values [enable-public-sharing true]
+    (tu/with-temp Dashboard [dashboard]
+      ((user->client :rasta) :post 403 (format "dashboard/%d/public_link" (u/get-id dashboard))))))
+
+;; Test that we *cannot* share a Dashboard if the setting is disabled
+(expect
+  "Public sharing is not enabled."
+  (tu/with-temporary-setting-values [enable-public-sharing false]
+    (tu/with-temp Dashboard [dashboard]
+      ((user->client :crowberto) :post 400 (format "dashboard/%d/public_link" (u/get-id dashboard))))))
+
+;; Test that we get a 404 if the Dashboard doesn't exist
+(expect
+  "Not found."
+  (tu/with-temporary-setting-values [enable-public-sharing true]
+    ((user->client :crowberto) :post 404 (format "dashboard/%d/public_link" Integer/MAX_VALUE))))
+
+;; Test that if a Dashboard has already been shared we reüse the existing UUID
+(tu/expect-with-temp [Dashboard       [dashboard]
+                      PublicDashboard [public-dashboard {:dashboard_id (u/get-id dashboard)}]]
+  (:uuid public-dashboard)
+  (tu/with-temporary-setting-values [enable-public-sharing true]
+    (:uuid ((user->client :crowberto) :post 200 (format "dashboard/%d/public_link" (u/get-id dashboard))))))
+
+
+;;; ------------------------------------------------------------ DELETE /api/dashboard/:id/public_link ------------------------------------------------------------
+
+;; Test that we can unshare a Dashboard
+(expect
+  false
+  (tu/with-temp* [Dashboard       [dashboard]
+                  PublicDashboard [public-dashboard {:dashboard_id (u/get-id dashboard)}]]
+    ((user->client :crowberto) :delete 204 (format "dashboard/%d/public_link" (u/get-id dashboard)))
+    (db/exists? PublicDashboard :dashboard_id (u/get-id dashboard))))
+
+;; Test that we *cannot* unshare a Dashboard if we are not admins
+(expect
+  "You don't have permissions to do that."
+  (tu/with-temp* [Dashboard       [dashboard]
+                  PublicDashboard [public-dashboard {:dashboard_id (u/get-id dashboard)}]]
+    ((user->client :rasta) :delete 403 (format "dashboard/%d/public_link" (u/get-id dashboard)))))
+
+;; Test that we get a 404 if Dashboard isn't shared
+(expect
+  "Not found."
+  (tu/with-temp Dashboard [dashboard]
+    ((user->client :crowberto) :delete 404 (format "dashboard/%d/public_link" (u/get-id dashboard)))))
+
+;; Test that we get a 404 if Dashboard doesn't exist
+(expect
+  "Not found."
+  ((user->client :crowberto) :delete 404 (format "dashboard/%d/public_link" Integer/MAX_VALUE)))

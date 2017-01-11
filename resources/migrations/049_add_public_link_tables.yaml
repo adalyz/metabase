@@ -1,0 +1,106 @@
+databaseChangeLog:
+  - changeSet:
+      id: 49
+      author: camsaul
+      changes:
+        ######################################## public_card table & indecies ########################################
+        - createTable:
+            tableName: public_card
+            remarks: 'Each row represents a single publically shared Card.'
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_id
+                  type: int
+                  remarks: 'ID of the Card made available for publically viewing via this entry.'
+                  constraints:
+                    nullable: false
+                    unique: true
+                    references: report_card(id)
+                    foreignKeyName: fk_public_card_card_id
+              - column:
+                  name: uuid
+                  type: char(36)
+                  remarks: 'Unique identifier used in public links; obscures actual Card ID.'
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: creator_id
+                  type: int
+                  remarks: 'The ID of the User who first publically shared this Card.'
+                  constraints:
+                    nullable: false
+                    references: core_user(id)
+                    foreignKeyName: fk_public_card_user_id
+        - createIndex:
+            tableName: public_card
+            indexName: idx_public_card_card_id
+            columns:
+              column:
+                name: card_id
+        - createIndex:
+            tableName: public_card
+            indexName: idx_public_card_uuid
+            columns:
+              column:
+                name: uuid
+        ######################################## public_dashboard table & indecies ########################################
+        - createTable:
+            tableName: public_dashboard
+            remarks: 'Each row represents a single publically shared Dashboard.'
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: dashboard_id
+                  type: int
+                  remarks: 'ID of the Dashboard made available for publically viewing via this entry.'
+                  constraints:
+                    nullable: false
+                    unique: true
+                    references: report_dashboard(id)
+                    foreignKeyName: fk_public_dashboard_dashboard_id
+              - column:
+                  name: uuid
+                  type: char(36)
+                  remarks: 'Unique identifier used in public links; obscures actual Dashboard ID.'
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: creator_id
+                  type: int
+                  remarks: 'The ID of the User who first publically shared this Dashboard.'
+                  constraints:
+                    nullable: false
+                    references: core_user(id)
+                    foreignKeyName: fk_public_dashboard_user_id
+        - createIndex:
+            tableName: public_dashboard
+            indexName: idx_public_dashboard_dashboard_id
+            columns:
+              column:
+                name: dashboard_id
+        - createIndex:
+            tableName: public_dashboard
+            indexName: idx_public_dashboard_uuid
+            columns:
+              column:
+                name: uuid
+        ######################################## make query_queryexecution.executor_id nullable ########################################
+        - dropNotNullConstraint:
+            tableName: query_queryexecution
+            columnName: executor_id
+            columnDataType: int
